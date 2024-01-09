@@ -17,7 +17,7 @@ app.get('/users', async (req, res) => {
         const users = await readDB()
 
         if (!users) {
-            throw new Error('There are no users')
+            throw new Error('Empty')
         }
 
         res.status(200).json(users)
@@ -33,7 +33,7 @@ app.get('/users/:id', async (req, res) => {
         const userById = users.find(user => user.id === +id)
 
         if (!userById) {
-            throw new Error('Wrong id')
+            throw new Error('Wrong ID')
         }
 
         res.status(200).json(userById)
@@ -57,13 +57,13 @@ app.post('/users', async (req, res) => {
         }
 
         const users = await readDB()
-        const lastIndex = users.length + 1
-        const createdUser = {id: lastIndex, name, age, email}
+        const lastUser = users[users.length - 1]
+        const createdUser = {id: lastUser.id + 1, name, email, age}
 
         users.push(createdUser)
         await writeDB(users)
 
-        res.sendStatus(204)
+        res.status(201).json(createdUser)
     } catch (e) {
         res.status(400).json(e.message)
     }
@@ -82,7 +82,7 @@ app.delete('/users/:id', async (req, res) => {
         users.splice(+id - 1, 1)
         await writeDB(users)
 
-        res.sendStatus(204)
+        res.status(201).json(users)
     } catch (e) {
         res.status(400).json(e.message)
     }
@@ -115,7 +115,7 @@ app.put('/users/:id', async (req, res) => {
 
         await writeDB(users)
 
-        res.sendStatus(204)
+        res.status(201).json(userById)
     } catch (e) {
         res.status(400).json(e.message)
     }
