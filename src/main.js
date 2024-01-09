@@ -73,13 +73,13 @@ app.delete('/users/:id', async (req, res) => {
     try {
         const {id} = req.params
         const users = await readDB()
-        const userById = users.find(user => user.id === +id)
+        const index = users.findIndex(user => user.id === +id)
 
-        if (!userById) {
+        if (!index) {
             throw new Error('Wrong id')
         }
 
-        users.splice(+id - 1, 1)
+        users.splice(index, 1)
         await writeDB(users)
 
         res.status(201).json(users)
